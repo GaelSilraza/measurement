@@ -2,6 +2,10 @@ import express from 'express';
 import 'reflect-metadata';
 import 'dotenv/config';
 import cors from 'cors';
+import swaggerUi from 'swagger-ui-express';
+import swaggerJsDoc from 'swagger-jsdoc';
+import { swaggerOptions } from './infra/config/swagger';
+import rateLimit from 'express-rate-limit';
 
 import './shared/utils/module-alias';
 import { application } from '@src/infra/config/application';
@@ -15,12 +19,18 @@ import { UNKNOWN_ERROR, knownErrors } from './error';
 // Pois, o atual serviço deixa crashar para ser reinicializado automaticamente pelo docker.
 // Não se esquecer de jogar parte do código para outro arquivo
 
-export const app = express();
+const app = express();
+const swaggerDocs = swaggerJsDoc(swaggerOptions);
+// const limiter = rateLimit({
+//   windowMs: 1 * 60 * 2000,
+// });
 
 app.use(cors());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
+// app.use(limiter);
 app.use('/', router);
+app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 
 const server = app.listen(application.port, () => {
   console.log('Server is running');

@@ -1,0 +1,9 @@
+{
+  "dependencies": {
+    "artillery": "^2.0.20"
+  },
+  "scripts": {
+    "start": "artillery run load-test.yml",
+    "start:export": "artillery run load-test.yml --output report.json && npx artillery report --output report.html report.json"
+  }
+}

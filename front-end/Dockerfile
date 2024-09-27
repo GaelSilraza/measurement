@@ -10,6 +10,4 @@ RUN npm install
 
 COPY . .
 
-RUN cp -r dist/* /front-end
-
 ENTRYPOINT ["npm", "run", "build"]

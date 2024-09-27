@@ -1,0 +1,25 @@
+config:
+  target: "http://localhost:3000"
+  http:
+    timeout: 60
+  phases:
+    - duration: 60                  
+      arrivalRate: 500               
+    - duration: 60
+      arrivalRate: 1000
+    - duration: 60
+      arrivalRate: 5000
+    - duration: 60
+      arrivalRate: 10000
+
+scenarios:
+  - flow:
+      - post:
+          url: "/measurement"
+          json:
+            equipmentId: "EQ-12495"
+            timestamp: "2024-09-27T15:30:00Z"
+            value: 23.5
+
+      - get:
+          url: "/measurement?limit=10&page=1&from=2024-09-01&to=2024-10-27"

@@ -8,7 +8,7 @@ const Measurement = () => {
 			display='flex'
 			justifyContent='center'
 			alignItems='center'
-			className='mt-4'
+			className='mt-4 mb-8'
 			flexDirection='column'
 			gap='2rem'
 		>
