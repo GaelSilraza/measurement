@@ -1,0 +1,76 @@
+services:
+  nginx:
+    restart: always
+    container_name: nginx
+    build:
+      context: ../docker/nginx
+      dockerfile: Dockerfile
+    ports:
+      - 80:80
+      - 3000:3000
+      # - 443:443
+    networks:
+      - nginx_network
+    env_file:
+      - .env
+    volumes:
+      - ./front-end:/usr/share/nginx/html
+      # - /etc/letsencrypt:/etc/letsencrypt/
+      # - ./certs/projeto:/usr/share/certs/projeto:ro
+    depends_on:
+      - frontend
+  db:
+    image: postgres:15.8-alpine
+    container_name: db
+    restart: always
+    environment:
+      POSTGRES_USER: $DB_USER
+      POSTGRES_PASSWORD: $DB_PASSWORD
+      POSTGRES_DB: $DB_NAME
+    env_file:
+      - .env
+    ports:
+      - 5433:5432
+    volumes:
+      - ./db_volume:/var/lib/postgresql/data
+    networks:
+      - nginx_network
+  backend:
+    restart: always
+    container_name: backend
+    image: backend
+    build:
+      context: ../back-end
+      dockerfile: Dockerfile
+    ports:
+      - $BACKEND_PORT:$BACKEND_PORT
+    env_file:
+      - .env
+      - ../back-end/.env
+    networks:
+      - nginx_network
+    depends_on:
+      - db
+    links:
+      - db
+  frontend:
+    restart: no
+    container_name: frontend
+    image: frontend
+    build:
+      context: ../front-end
+      dockerfile: Dockerfile
+    env_file:
+      - .env
+      - ../front-end/.env
+    volumes:
+      - ./front-end:/front-end/dist
+
+networks:
+  nginx_network:
+    driver: bridge
+    name: nginx_network
+
+volumes:
+  db_volume:
+  front-end:
